@@ -1,57 +1,62 @@
 /* === 全局與基本佈局 === */
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    margin: 0;
+html, body {
+    height: 100%; /* 讓 html 和 body 佔滿整個視窗高度 */
+    margin: 0;    /* 移除預設的 body margin */
+    padding: 0;   /* 移除預設的 body padding */
+    overflow: hidden; /* 防止在某些情況下出現不必要的滾動條 */
+    font-family: Arial, sans-serif; /* 將 font-family 移到這裡，應用於全局 */
+    background-color: #f0f0f0; /* 您可以保留 body 的背景色，或者讓 chat-container 覆蓋 */
 }
 
 #chat-container {
-    width: 90%; /* */
-    max-width: 800px; /* 建議：為大螢幕添加最大寬度 */
-    height: 90vh;    /* 建議：使用vh以適應螢幕，原為500px */ /* */
-    max-height: 700px; /* 建議：為聊天容器設定最大高度 */
-    border: 1px solid #ccc; /* */
-    background-color: #fff; /* */
-    border-radius: 8px; /* */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* */ /* 稍微加強陰影 */
-    overflow: hidden; /* */
-    display: flex; /* */
-    flex-direction: column; /* */
+    width: 100vw;    /* 寬度佔滿整個視窗寬度 */
+    height: 100vh;   /* 高度佔滿整個視窗高度 */
+    /* border: 1px solid #ccc; */ /* 移除邊框 */
+    background-color: #fff; /* 聊天容器的背景色 */
+    /* border-radius: 8px; */ /* 移除圓角 */
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */ /* 移除陰影 */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* 移除 max-width 和 max-height，如果之前有設定且希望全螢幕 */
+    /* max-width: none; */
+    /* max-height: none; */
 }
 
 #chat-window {
-    flex-grow: 1; /* */
-    padding: 15px; /* */ /* 增加內邊距 */
-    overflow-y: auto; /* */
-    border-bottom: 1px solid #e0e0e0; /* */ /* 調整邊框顏色 */
+    flex-grow: 1;
+    padding: 20px; /* 可以稍微調整內邊距 */
+    overflow-y: auto;
+    /* border-bottom: 1px solid #e0e0e0; */ /* 如果希望聊天視窗和輸入區之間無分隔線，可以移除 */
 }
 
 #messages {
-    display: flex; /* */
-    flex-direction: column; /* */
-    gap: 10px; /* 使用gap屬性設定訊息間距，替代margin */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 可以調整訊息間距 */
+    /* 可以考慮為 messages 容器增加一些左右 padding，避免訊息緊貼邊緣 */
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #input {
-    display: flex; /* */
-    align-items: center; /* */
-    padding: 12px 15px; /* */ /* 調整內邊距 */
-    background-color: #f8f9fa; /* */ /* 輕微調整背景色 */
-    border-top: 1px solid #e0e0e0; /* 新增：在輸入區上方加一條分隔線 */
+    display: flex;
+    align-items: center;
+    padding: 15px 20px; /* 可以調整內邊距 */
+    background-color: #f8f9fa;
+    /* border-top: 1px solid #e0e0e0; */ /* 如果希望聊天視窗和輸入區之間無分隔線，可以移除 */
+    flex-shrink: 0; /* 防止輸入區域在內容過多時被壓縮 */
 }
 
 /* === 訊息樣式 === */
 .message {
-    padding: 10px 14px; /* */
-    border-radius: 12px; /* */ /* 調整圓角 */
-    max-width: 78%; /* 限制訊息最大寬度 */
-    line-height: 1.5; /* 增加行高 */
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* 為訊息氣泡增加細微陰影 */
-    transition: box-shadow 0.3s ease, transform 0.2s ease; /* */
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 70%; /* 在全螢幕下，可能需要調整訊息的最大寬度百分比 */
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    /* 為 AI 和 User 訊息添加一些左右 margin，使其不會緊貼邊緣 */
 }
 
 .message:hover {
@@ -60,23 +65,27 @@ body {
 }
 
 .user-message {
-    align-self: flex-end; /* */
-    background-color: #007bff; /* */
-    color: #fff; /* */
-    border-bottom-right-radius: 4px; /* 調整特定圓角使之更像對話氣泡 */
-    animation: slideInFromRight 0.4s ease-out; /* */
+    align-self: flex-end;
+    background-color: #007bff;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    animation: slideInFromRight 0.4s ease-out;
+    margin-left: auto; /* 使其靠右 */
+    margin-right: 10px; /* 與右邊緣的距離 */
 }
 
 .ai-message {
-    align-self: flex-start; /* */
-    background-color: #e9ecef; /* */
-    color: #212529; /* */ /* 深色文字以確保對比度 */
-    border-bottom-left-radius: 4px; /* 調整特定圓角 */
-    position: relative; /* */
-    min-height: 25px; /* */ /* 確保最小高度 */
-    display: flex; /* */
-    align-items: center; /* */
-    padding: 10px 14px; /* 確保 AI 訊息也有基礎 padding */ /* */
+    align-self: flex-start;
+    background-color: #e9ecef;
+    color: #212529;
+    border-bottom-left-radius: 4px;
+    position: relative;
+    min-height: 25px;
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    margin-left: 10px; /* 與左邊緣的距離 */
+    margin-right: auto; /* 使其靠左 */
 }
 
 /* === 動畫定義 === */
@@ -238,6 +247,7 @@ body {
     font-size: 0.9em;
     line-height: 1.5;
     margin: 0.8em 0;
+    max-width: 90%; /* 或一個固定的像素值，避免程式碼區塊過寬 */
     white-space: pre; /* 保留空白符和換行 */
 }
 
