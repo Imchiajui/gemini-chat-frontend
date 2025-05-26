@@ -1,189 +1,160 @@
 /* === 全局與基本佈局 === */
 html, body {
-    height: 100%; /* 讓 html 和 body 佔滿整個視窗高度 */
-    margin: 0;    /* 移除預設的 body margin */
-    padding: 0;   /* 移除預設的 body padding */
-    overflow: hidden; /* 防止在某些情況下出現不必要的滾動條 */
-    font-family: Arial, sans-serif; /* 將 font-family 移到這裡，應用於全局 */
-    background-color: #f0f0f0; /* 您可以保留 body 的背景色，或者讓 chat-container 覆蓋 */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* 防止 body 出現不必要的滾動條 */
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* 整體頁面背景色 */
 }
 
 #chat-container {
     width: 100vw;    /* 寬度佔滿整個視窗寬度 */
     height: 100vh;   /* 高度佔滿整個視窗高度 */
-    /* border: 1px solid #ccc; */ /* 移除邊框 */
     background-color: #fff; /* 聊天容器的背景色 */
-    /* border-radius: 8px; */ /* 移除圓角 */
-    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */ /* 移除陰影 */
-    overflow: hidden;
+    overflow: hidden; /* chat-container 自身內容不滾動 */
     display: flex;
     flex-direction: column;
-    /* 移除 max-width 和 max-height，如果之前有設定且希望全螢幕 */
-    /* max-width: none; */
-    /* max-height: none; */
 }
 
 #chat-window {
-    flex-grow: 1;
-    padding: 20px; /* 可以稍微調整內邊距 */
-    overflow-y: auto;
-    /* border-bottom: 1px solid #e0e0e0; */ /* 如果希望聊天視窗和輸入區之間無分隔線，可以移除 */
+    flex-grow: 1; /* 佔據 chat-container 的剩餘空間 */
+    padding: 20px;
+    overflow-y: auto; /* 聊天內容溢出時，#chat-window 出現垂直滾動條 */
+    background-color: #ffffff; /* 聊天視窗背景色 */
 }
 
 #messages {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* 可以調整訊息間距 */
-    /* 可以考慮為 messages 容器增加一些左右 padding，避免訊息緊貼邊緣 */
-    padding-left: 10px;
-    padding-right: 10px;
+    gap: 12px; /* 訊息之間的垂直間距 */
+    padding-left: 10px;  /* 訊息流左側內邊距 */
+    padding-right: 10px; /* 訊息流右側內邊距 */
 }
 
 #input {
     display: flex;
     align-items: center;
-    padding: 15px 20px; /* 可以調整內邊距 */
-    background-color: #f8f9fa;
-    /* border-top: 1px solid #e0e0e0; */ /* 如果希望聊天視窗和輸入區之間無分隔線，可以移除 */
-    flex-shrink: 0; /* 防止輸入區域在內容過多時被壓縮 */
+    padding: 15px 20px;
+    background-color: #f8f9fa; /* 輸入區域背景色 */
+    border-top: 1px solid #e0e0e0; /* 輸入區頂部分隔線 */
+    flex-shrink: 0; /* 防止輸入區域被壓縮 */
 }
 
 /* === 訊息樣式 === */
 .message {
     padding: 10px 14px;
-    border-radius: 12px;
-    max-width: 70%; /* 在全螢幕下，可能需要調整訊息的最大寬度百分比 */
-    line-height: 1.5;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    border-radius: 18px; /* 更圓潤的氣泡 */
+    max-width: 70%;
+    line-height: 1.6;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: box-shadow 0.3s ease, transform 0.2s ease;
-    /* 為 AI 和 User 訊息添加一些左右 margin，使其不會緊貼邊緣 */
+    word-wrap: break-word; /* 確保長單詞或鏈接能換行 */
 }
 
 .message:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* */
-    transform: translateY(-1px); /* */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 
 .user-message {
     align-self: flex-end;
-    background-color: #007bff;
+    background-color: #007bff; /* 使用者訊息背景色 */
     color: #fff;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 6px; /* 特定圓角使其更像對話氣泡 */
     animation: slideInFromRight 0.4s ease-out;
-    margin-left: auto; /* 使其靠右 */
-    margin-right: 10px; /* 與右邊緣的距離 */
+    margin-left: auto;
+    margin-right: 10px;
 }
 
 .ai-message {
     align-self: flex-start;
-    background-color: #e9ecef;
+    background-color: #e9ecef; /* AI 訊息背景色 */
     color: #212529;
-    border-bottom-left-radius: 4px;
-    position: relative;
-    min-height: 25px;
-    display: flex;
-    align-items: center;
-    padding: 10px 14px;
-    margin-left: 10px; /* 與左邊緣的距離 */
-    margin-right: auto; /* 使其靠左 */
+    border-bottom-left-radius: 6px; /* 特定圓角 */
+    position: relative; /* 為了可能的內部絕對定位元素 */
+    min-height: 30px; /* 最小高度，避免空訊息或打字點時過於扁平 */
+    display: flex; /* 使內部元素 (打字點/文字容器) 能正確對齊 */
+    align-items: center; /* 垂直居中打字點或單行文字 */
+    padding: 10px 14px; /* 確保 AI 氣泡也有內邊距 */
+    margin-left: 10px;
+    margin-right: auto;
 }
 
 /* === 動畫定義 === */
-/* 原始 fadeIn 動畫 (目前 JS 中未直接使用，可按需保留或移除) */
-/* @keyframes fadeIn {
+@keyframes slideInFromRight {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateX(25px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
-    }
-} */
-
-@keyframes slideInFromRight {
-    from {
-        opacity: 0; /* */
-        transform: translateX(20px) translateY(5px); /* */
-    }
-    to {
-        opacity: 1; /* */
-        transform: translateX(0) translateY(0); /* */
+        transform: translateX(0);
     }
 }
 
-/* AI 訊息登場動畫 (clip-path) */
+/* AI 訊息登場動畫 (clip-path 和 opacity) */
 .message.ai-message.reveal-from-left {
-    clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); /* 初始狀態：完全裁剪 */ /* */
-    opacity: 0; /* 動畫從opacity 0開始 */ /* */
-    animation: revealClipPathAnimation 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* */ /* 使用貝茲曲線調整動畫速率 */
+    clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+    opacity: 0;
+    animation: revealClipPathAnimation 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 @keyframes revealClipPathAnimation {
     to {
-        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); /* 最終狀態：完全顯示 */ /* */
-        opacity: 1; /* 動畫到opacity 1結束 */ /* */
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        opacity: 1;
     }
 }
 
 /* === AI 打字指示器 === */
 .typing-indicator-dots {
-    display: flex; /* */
-    align-items: center; /* */
-    justify-content: flex-start; /* */
-    opacity: 1; /* 初始可見 */ /* */
-    transition: opacity 0.3s ease-out; /* 淡出效果 */ /* */
-    width: auto; /* 寬度由內容決定 */ /* */
-    /* padding: 0 2px; */ /* 移除，因父層 .ai-message 已有 padding */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    opacity: 1;
+    transition: opacity 0.3s ease-out; /* 打字點淡出動畫 */
+    width: auto; /* 由內容決定寬度 */
+    height: 100%; /* 嘗試使其填滿父元素高度，以便垂直居中 */
 }
 
 .typing-indicator-dots span {
-    display: inline-block; /* */
-    width: 8px; /* */
-    height: 8px; /* */
-    border-radius: 50%; /* */
-    background-color: #6c757d; /* */ /* 調整點點顏色 */
-    margin: 0 2.5px; /* */ /* 微調點點間距 */
-    animation: pulse 1.4s infinite ease-in-out both; /* */
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #6c757d; /* 打字點顏色 */
+    margin: 0 2.5px; /* 點之間的間距 */
+    animation: pulse 1.4s infinite ease-in-out both;
 }
 
-.typing-indicator-dots span:nth-child(1) {
-    animation-delay: -0.32s; /* */
-}
-
-.typing-indicator-dots span:nth-child(2) {
-    animation-delay: -0.16s; /* */
-}
-
-.typing-indicator-dots span:nth-child(3) {
-    animation-delay: 0s; /* */
-}
+.typing-indicator-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator-dots span:nth-child(2) { animation-delay: -0.16s; }
+.typing-indicator-dots span:nth-child(3) { animation-delay: 0s; }
 
 @keyframes pulse {
     0%, 80%, 100% {
-        transform: scale(0.6); /* */ /* 調整縮放比例 */
-        opacity: 0.6; /* */ /* 調整透明度 */
+        transform: scale(0.6);
+        opacity: 0.6;
     }
     40% {
-        transform: scale(1.0); /* */
-        opacity: 1; /* */
+        transform: scale(1.0);
+        opacity: 1;
     }
 }
 
-/* === AI 回應文字容器 === */
+/* === AI 回應文字容器 (在 ai-message 內部) === */
 .ai-response-text {
-    display: none; /* 初始由 JS 控制是否顯示 */ /* */
-    line-height: 1.5; /* 與 .message 一致 */ /* */
-    width: 100%; /* */
-    color: inherit; /* 繼承 .ai-message 的文字顏色 */ /* */
-    word-wrap: break-word; /* 確保長單詞能換行 */
+    display: none; /* 初始隱藏，由 JS 控制 */
+    width: 100%; /* 填滿父氣泡可用寬度 */
+    line-height: inherit; /* 繼承 .message 的行高 */
+    color: inherit; /* 繼承 .ai-message 的文字顏色 */
 }
 
-
+/* === Markdown 內容樣式 (在 .ai-message 內部) === */
 .ai-message p {
     margin-top: 0;
-    margin-bottom: 0.8em; /* 段落間距 */
-    line-height: 1.6;
+    margin-bottom: 0.8em;
 }
 .ai-message p:last-child {
     margin-bottom: 0;
@@ -195,14 +166,15 @@ html, body {
     line-height: 1.3;
     font-weight: 600;
 }
-.ai-message h1 { font-size: 1.75em; }
-.ai-message h2 { font-size: 1.5em; }
+.ai-message h1 { font-size: 1.6em; }
+.ai-message h2 { font-size: 1.4em; }
 .ai-message h3 { font-size: 1.25em; }
+/* ... 其他 h 標籤大小 ... */
 
 .ai-message ul, .ai-message ol {
     margin-top: 0.5em;
     margin-bottom: 0.8em;
-    padding-left: 1.8em; /* 列表縮進 */
+    padding-left: 1.8em;
 }
 
 .ai-message li {
@@ -212,48 +184,51 @@ html, body {
 .ai-message blockquote {
     margin: 0.8em 0;
     padding: 0.8em 1.2em;
-    border-left: 5px solid #007bff; /* 引用區塊的左邊框 */
-    background-color: #f8f9fa; /* 引用區塊的背景色 */
+    border-left: 5px solid #007bff;
+    background-color: #f8f9fa;
     color: #495057;
 }
 .ai-message blockquote p {
     margin-bottom: 0.5em;
 }
+.ai-message blockquote p:last-child {
+    margin-bottom: 0;
+}
 
 .ai-message hr {
     border: 0;
     height: 1px;
-    background-color: #dee2e6; /* 分隔線顏色 */
+    background-color: #dee2e6;
     margin: 1.5em 0;
 }
 
 .ai-message a {
-    color: #0056b3; /* 連結顏色 */
+    color: #0056b3;
     text-decoration: underline;
 }
 .ai-message a:hover {
     color: #003875;
+    text-decoration: none;
 }
 
-/* 程式碼區塊 (pre 和 code) */
 .ai-message pre {
-    background-color: #282c34; /* 深色背景，配合 atom-one-dark 高亮主題 */
-    color: #abb2bf;           /* 預設文字顏色 */
+    background-color: #282c34; /* 深色背景以搭配常見高亮主題 */
+    color: #abb2bf;
     border: 1px solid #21252b;
     border-radius: 6px;
     padding: 1em;
-    overflow-x: auto; /* 水平滾動 */
+    overflow-x: auto; /* 水平滾動長程式碼 */
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     font-size: 0.9em;
     line-height: 1.5;
     margin: 0.8em 0;
-    max-width: 90%; /* 或一個固定的像素值，避免程式碼區塊過寬 */
-    white-space: pre; /* 保留空白符和換行 */
+    max-width: 100%; /* 確保 pre 不會超出氣泡 */
+    white-space: pre; /* 保留程式碼中的空白和換行 */
 }
 
 .ai-message code { /* 行內程式碼 */
-    background-color: rgba(175, 184, 193, 0.2); /* 輕微背景 */
-    color: inherit; /* 主要繼承，但高亮會覆蓋 */
+    background-color: rgba(175, 184, 193, 0.2);
+    color: inherit;
     padding: 0.2em 0.4em;
     margin: 0 0.1em;
     font-size: 85%;
@@ -261,23 +236,25 @@ html, body {
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 }
 
-.ai-message pre code { /* pre 內的 code 通常不需要額外背景或 padding，由 pre 控制 */
+.ai-message pre code { /* pre 內的 code 通常不需要額外背景或 padding */
     background-color: transparent;
     padding: 0;
     margin: 0;
-    font-size: inherit; /* 繼承 pre 的字體大小 */
-    color: inherit;     /* 繼承 pre 的文字顏色 (高亮會覆蓋) */
+    font-size: inherit;
+    color: inherit;
     border-radius: 0;
-    white-space: inherit; /* 繼承 pre 的 white-space 處理 */
+    white-space: inherit;
 }
 
-/* 表格樣式 */
 .ai-message table {
     border-collapse: collapse;
     margin: 1em 0;
-    width: auto; /* 或者根据需要设为 100% */
+    width: auto;
+    max-width: 100%; /* 確保表格不會超出氣泡 */
     font-size: 0.95em;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    overflow-x: auto; /* 如果表格太寬，允許水平滾動 */
+    display: block; /* 為了讓 overflow-x 生效 */
 }
 
 .ai-message th, .ai-message td {
@@ -296,77 +273,71 @@ html, body {
 
 /* === 輸入區域 === */
 #user-input {
-    flex-grow: 1; /* */
-    padding: 12px 18px; /* */ /* 調整內邊距 */
-    border: 1px solid #ced4da; /* */ /* 調整邊框顏色 */
-    border-radius: 22px; /* */ /* 更圓潤的輸入框 */
-    outline: none; /* */
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* */
-    margin-right: 12px; /* */ /* 調整與按鈕的間距 */
+    flex-grow: 1;
+    padding: 12px 18px;
+    border: 1px solid #ced4da;
+    border-radius: 22px; /* 圓角輸入框 */
+    outline: none;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-right: 12px;
     font-size: 1rem;
-    background-color: #fff; /* 確保輸入框背景為白色 */
+    background-color: #fff;
 }
 
 #user-input:focus {
-    border-color: rgb(0, 123, 255); /* */
-    box-shadow: 0 0 0 0.2rem rgb(0, 123, 255,0.25); /* */
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 #send-button {
-    background-color: transparent; /* */
-    width: 44px; /* */
-    height: 44px; /* */
-    border-radius: 50%; /* */
-    border: none ; /* 移除邊框，使其更像圖示按鈕 */ /* */
-    box-shadow: 0 1px 4px #007bff;  /* 按下時增加陰影 */
-    display: flex; /* */
-    align-items: center; /* */
-    justify-content: center; /* */
-    padding: 0; /* */
-    cursor: pointer; /* */
-    outline: none; /* */
-    transition: background-color 0.2s ease, transform 0.1s ease; /* */ /* 簡化過渡 */
+    background-color: transparent;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%; /* 圓形按鈕 */
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 123, 255, 0.5); /* 輕微陰影 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
 }
 
 #send-button:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* */ /* 懸停時的背景色 */
-    border: none; 
-    box-shadow: 0 2px 4px #007bff; /* */ /* 按下時增加陰影 */
+    background-color: rgba(0, 123, 255, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.6);
 }
 
 #send-button:active {
-    transform: scale(0.92); /* */
-    background-color: rgba(0, 123, 255, 0.15); /* */ /* 按下時背景色加深 */
-    border: none; 
-    box-shadow: 0 2px 4px #007bff; /* */ /* 按下時增加陰影 */
+    transform: scale(0.92);
+    background-color: rgba(0, 123, 255, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 123, 255, 0.4);
 }
 
 #send-button svg {
-    width: 22px; /* */
-    height: 22px; /* */
-    fill: #007bff; /* */ /* 直接使用主題色 */
-    transition: fill 0.2s ease; /* */ /* 簡化過渡 */
+    width: 22px;
+    height: 22px;
+    fill: #007bff; /* SVG 圖示顏色 */
+    transition: fill 0.2s ease;
 }
-
-/* #send-button:hover svg { */ /* SVG 顏色在按鈕 hover 時不變，因為按鈕背景已有變化 */
-    /* fill: #0056b3; */
-/* } */
 
 /* === 捲動軸樣式 (適用於 WebKit 核心瀏覽器) === */
 #chat-window::-webkit-scrollbar {
-    width: 8px; /* */
+    width: 8px;
 }
 
 #chat-window::-webkit-scrollbar-track {
-    background: #f8f9fa; /* */
-    border-radius: 4px; /* */
+    background: #f8f9fa; /* 捲動條軌道背景色 */
+    border-radius: 4px;
 }
 
 #chat-window::-webkit-scrollbar-thumb {
-    background: #ced4da; /* */
-    border-radius: 4px; /* */
+    background: #ced4da; /* 捲動條滑塊顏色 */
+    border-radius: 4px;
 }
 
 #chat-window::-webkit-scrollbar-thumb:hover {
-    background: #adb5bd; /* */
+    background: #adb5bd; /* 滑塊懸停時顏色 */
 }
