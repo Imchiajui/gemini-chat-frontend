@@ -1,0 +1,362 @@
+/* === 全局與基本佈局 === */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+#chat-container {
+    width: 90%; /* */
+    max-width: 800px; /* 建議：為大螢幕添加最大寬度 */
+    height: 90vh;    /* 建議：使用vh以適應螢幕，原為500px */ /* */
+    max-height: 700px; /* 建議：為聊天容器設定最大高度 */
+    border: 1px solid #ccc; /* */
+    background-color: #fff; /* */
+    border-radius: 8px; /* */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* */ /* 稍微加強陰影 */
+    overflow: hidden; /* */
+    display: flex; /* */
+    flex-direction: column; /* */
+}
+
+#chat-window {
+    flex-grow: 1; /* */
+    padding: 15px; /* */ /* 增加內邊距 */
+    overflow-y: auto; /* */
+    border-bottom: 1px solid #e0e0e0; /* */ /* 調整邊框顏色 */
+}
+
+#messages {
+    display: flex; /* */
+    flex-direction: column; /* */
+    gap: 10px; /* 使用gap屬性設定訊息間距，替代margin */
+}
+
+#input {
+    display: flex; /* */
+    align-items: center; /* */
+    padding: 12px 15px; /* */ /* 調整內邊距 */
+    background-color: #f8f9fa; /* */ /* 輕微調整背景色 */
+    border-top: 1px solid #e0e0e0; /* 新增：在輸入區上方加一條分隔線 */
+}
+
+/* === 訊息樣式 === */
+.message {
+    padding: 10px 14px; /* */
+    border-radius: 12px; /* */ /* 調整圓角 */
+    max-width: 78%; /* 限制訊息最大寬度 */
+    line-height: 1.5; /* 增加行高 */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* 為訊息氣泡增加細微陰影 */
+    transition: box-shadow 0.3s ease, transform 0.2s ease; /* */
+}
+
+.message:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* */
+    transform: translateY(-1px); /* */
+}
+
+.user-message {
+    align-self: flex-end; /* */
+    background-color: #007bff; /* */
+    color: #fff; /* */
+    border-bottom-right-radius: 4px; /* 調整特定圓角使之更像對話氣泡 */
+    animation: slideInFromRight 0.4s ease-out; /* */
+}
+
+.ai-message {
+    align-self: flex-start; /* */
+    background-color: #e9ecef; /* */
+    color: #212529; /* */ /* 深色文字以確保對比度 */
+    border-bottom-left-radius: 4px; /* 調整特定圓角 */
+    position: relative; /* */
+    min-height: 25px; /* */ /* 確保最小高度 */
+    display: flex; /* */
+    align-items: center; /* */
+    padding: 10px 14px; /* 確保 AI 訊息也有基礎 padding */ /* */
+}
+
+/* === 動畫定義 === */
+/* 原始 fadeIn 動畫 (目前 JS 中未直接使用，可按需保留或移除) */
+/* @keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} */
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0; /* */
+        transform: translateX(20px) translateY(5px); /* */
+    }
+    to {
+        opacity: 1; /* */
+        transform: translateX(0) translateY(0); /* */
+    }
+}
+
+/* AI 訊息登場動畫 (clip-path) */
+.message.ai-message.reveal-from-left {
+    clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); /* 初始狀態：完全裁剪 */ /* */
+    opacity: 0; /* 動畫從opacity 0開始 */ /* */
+    animation: revealClipPathAnimation 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* */ /* 使用貝茲曲線調整動畫速率 */
+}
+
+@keyframes revealClipPathAnimation {
+    to {
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); /* 最終狀態：完全顯示 */ /* */
+        opacity: 1; /* 動畫到opacity 1結束 */ /* */
+    }
+}
+
+/* === AI 打字指示器 === */
+.typing-indicator-dots {
+    display: flex; /* */
+    align-items: center; /* */
+    justify-content: flex-start; /* */
+    opacity: 1; /* 初始可見 */ /* */
+    transition: opacity 0.3s ease-out; /* 淡出效果 */ /* */
+    width: auto; /* 寬度由內容決定 */ /* */
+    /* padding: 0 2px; */ /* 移除，因父層 .ai-message 已有 padding */
+}
+
+.typing-indicator-dots span {
+    display: inline-block; /* */
+    width: 8px; /* */
+    height: 8px; /* */
+    border-radius: 50%; /* */
+    background-color: #6c757d; /* */ /* 調整點點顏色 */
+    margin: 0 2.5px; /* */ /* 微調點點間距 */
+    animation: pulse 1.4s infinite ease-in-out both; /* */
+}
+
+.typing-indicator-dots span:nth-child(1) {
+    animation-delay: -0.32s; /* */
+}
+
+.typing-indicator-dots span:nth-child(2) {
+    animation-delay: -0.16s; /* */
+}
+
+.typing-indicator-dots span:nth-child(3) {
+    animation-delay: 0s; /* */
+}
+
+@keyframes pulse {
+    0%, 80%, 100% {
+        transform: scale(0.6); /* */ /* 調整縮放比例 */
+        opacity: 0.6; /* */ /* 調整透明度 */
+    }
+    40% {
+        transform: scale(1.0); /* */
+        opacity: 1; /* */
+    }
+}
+
+/* === AI 回應文字容器 === */
+.ai-response-text {
+    display: none; /* 初始由 JS 控制是否顯示 */ /* */
+    line-height: 1.5; /* 與 .message 一致 */ /* */
+    width: 100%; /* */
+    color: inherit; /* 繼承 .ai-message 的文字顏色 */ /* */
+    word-wrap: break-word; /* 確保長單詞能換行 */
+}
+
+
+.ai-message p {
+    margin-top: 0;
+    margin-bottom: 0.8em; /* 段落間距 */
+    line-height: 1.6;
+}
+.ai-message p:last-child {
+    margin-bottom: 0;
+}
+
+.ai-message h1, .ai-message h2, .ai-message h3, .ai-message h4, .ai-message h5, .ai-message h6 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+    font-weight: 600;
+}
+.ai-message h1 { font-size: 1.75em; }
+.ai-message h2 { font-size: 1.5em; }
+.ai-message h3 { font-size: 1.25em; }
+
+.ai-message ul, .ai-message ol {
+    margin-top: 0.5em;
+    margin-bottom: 0.8em;
+    padding-left: 1.8em; /* 列表縮進 */
+}
+
+.ai-message li {
+    margin-bottom: 0.3em;
+}
+
+.ai-message blockquote {
+    margin: 0.8em 0;
+    padding: 0.8em 1.2em;
+    border-left: 5px solid #007bff; /* 引用區塊的左邊框 */
+    background-color: #f8f9fa; /* 引用區塊的背景色 */
+    color: #495057;
+}
+.ai-message blockquote p {
+    margin-bottom: 0.5em;
+}
+
+.ai-message hr {
+    border: 0;
+    height: 1px;
+    background-color: #dee2e6; /* 分隔線顏色 */
+    margin: 1.5em 0;
+}
+
+.ai-message a {
+    color: #0056b3; /* 連結顏色 */
+    text-decoration: underline;
+}
+.ai-message a:hover {
+    color: #003875;
+}
+
+/* 程式碼區塊 (pre 和 code) */
+.ai-message pre {
+    background-color: #282c34; /* 深色背景，配合 atom-one-dark 高亮主題 */
+    color: #abb2bf;           /* 預設文字顏色 */
+    border: 1px solid #21252b;
+    border-radius: 6px;
+    padding: 1em;
+    overflow-x: auto; /* 水平滾動 */
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin: 0.8em 0;
+    white-space: pre; /* 保留空白符和換行 */
+}
+
+.ai-message code { /* 行內程式碼 */
+    background-color: rgba(175, 184, 193, 0.2); /* 輕微背景 */
+    color: inherit; /* 主要繼承，但高亮會覆蓋 */
+    padding: 0.2em 0.4em;
+    margin: 0 0.1em;
+    font-size: 85%;
+    border-radius: 3px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+.ai-message pre code { /* pre 內的 code 通常不需要額外背景或 padding，由 pre 控制 */
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: inherit; /* 繼承 pre 的字體大小 */
+    color: inherit;     /* 繼承 pre 的文字顏色 (高亮會覆蓋) */
+    border-radius: 0;
+    white-space: inherit; /* 繼承 pre 的 white-space 處理 */
+}
+
+/* 表格樣式 */
+.ai-message table {
+    border-collapse: collapse;
+    margin: 1em 0;
+    width: auto; /* 或者根据需要设为 100% */
+    font-size: 0.95em;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.ai-message th, .ai-message td {
+    border: 1px solid #ddd;
+    padding: 0.6em 0.8em;
+    text-align: left;
+}
+
+.ai-message th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+.ai-message tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* === 輸入區域 === */
+#user-input {
+    flex-grow: 1; /* */
+    padding: 12px 18px; /* */ /* 調整內邊距 */
+    border: 1px solid #ced4da; /* */ /* 調整邊框顏色 */
+    border-radius: 22px; /* */ /* 更圓潤的輸入框 */
+    outline: none; /* */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* */
+    margin-right: 12px; /* */ /* 調整與按鈕的間距 */
+    font-size: 1rem;
+    background-color: #fff; /* 確保輸入框背景為白色 */
+}
+
+#user-input:focus {
+    border-color: rgb(0, 123, 255); /* */
+    box-shadow: 0 0 0 0.2rem rgb(0, 123, 255,0.25); /* */
+}
+
+#send-button {
+    background-color: transparent; /* */
+    width: 44px; /* */
+    height: 44px; /* */
+    border-radius: 50%; /* */
+    border: none ; /* 移除邊框，使其更像圖示按鈕 */ /* */
+    box-shadow: 0 1px 4px #007bff;  /* 按下時增加陰影 */
+    display: flex; /* */
+    align-items: center; /* */
+    justify-content: center; /* */
+    padding: 0; /* */
+    cursor: pointer; /* */
+    outline: none; /* */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* */ /* 簡化過渡 */
+}
+
+#send-button:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* */ /* 懸停時的背景色 */
+    border: none; 
+    box-shadow: 0 2px 4px #007bff; /* */ /* 按下時增加陰影 */
+}
+
+#send-button:active {
+    transform: scale(0.92); /* */
+    background-color: rgba(0, 123, 255, 0.15); /* */ /* 按下時背景色加深 */
+    border: none; 
+    box-shadow: 0 2px 4px #007bff; /* */ /* 按下時增加陰影 */
+}
+
+#send-button svg {
+    width: 22px; /* */
+    height: 22px; /* */
+    fill: #007bff; /* */ /* 直接使用主題色 */
+    transition: fill 0.2s ease; /* */ /* 簡化過渡 */
+}
+
+/* #send-button:hover svg { */ /* SVG 顏色在按鈕 hover 時不變，因為按鈕背景已有變化 */
+    /* fill: #0056b3; */
+/* } */
+
+/* === 捲動軸樣式 (適用於 WebKit 核心瀏覽器) === */
+#chat-window::-webkit-scrollbar {
+    width: 8px; /* */
+}
+
+#chat-window::-webkit-scrollbar-track {
+    background: #f8f9fa; /* */
+    border-radius: 4px; /* */
+}
+
+#chat-window::-webkit-scrollbar-thumb {
+    background: #ced4da; /* */
+    border-radius: 4px; /* */
+}
+
+#chat-window::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd; /* */
+}

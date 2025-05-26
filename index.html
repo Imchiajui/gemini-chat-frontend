@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@latest/dist/purify.min.js"></script>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-window">
+            <div id="messages"></div>
+        </div>
+        <div id="input">
+            <input type="text" id="user-input" placeholder="輸入訊息...">
+            <button id="send-button">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 50px; height: 50px;">
+                    <path d="M12 5 L7 10 L10.5 10 L10.5 19 L13.5 19 L13.5 10 L17 10 Z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
