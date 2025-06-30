@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,13 @@
             <div id="messages"></div>
         </div>
         <div id="input">
-            <input type="text" id="user-input" placeholder="輸入訊息...">
+            <button class="add-attachment-button">+</button>
+            
+            <textarea id="user-input" placeholder="輸入訊息..." rows="1"></textarea>
+            
             <button id="send-button">
-                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 50px; height: 50px;">
-                    <path d="M12 5 L7 10 L10.5 10 L10.5 19 L13.5 19 L13.5 10 L17 10 Z" />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 19.5L21.5 12.5L4.5 5.5V10.5L16.5 12.5L4.5 14.5V19.5Z" fill="white"/>
                 </svg>
             </button>
         </div>
